@@ -3,7 +3,7 @@ Cumulocity client using spring boot reactive stack (WebFlux)
 
 ## State
 
-Current Cumulocity Java SDK are synchrone. To build a non blocking and even a reactive application a reactive client is needed. Currently i do first steps using WebFlux and did first draft of InventoryService. I am looking also for Contributers, please let me know! 
+Current Cumulocity Java SDK are synchrone. To build a non blocking and even a reactive application a reactive client is needed. Currently i do first steps using WebFlux and did first draft of InventoryService. I am looking also for contributors, please let me know! 
 
 ## Vision
 
