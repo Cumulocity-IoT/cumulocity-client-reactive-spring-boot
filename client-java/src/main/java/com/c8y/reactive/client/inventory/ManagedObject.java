@@ -32,27 +32,27 @@ public class ManagedObject {
 	/**
 	 * A collection of references to additional parents objects
 	 */
-	private ManagedObjectReferences additionParents;
+	private ManagedObjectReferenceCollection additionParents;
 	/**
 	 * A collection of references to device parent objects
 	 */
-	private ManagedObjectReferences assetParents;
+	private ManagedObjectReferenceCollection assetParents;
 	/**
 	 * A collection of references to child addition objects
 	 */
-	private ManagedObjectReferences childAdditions;
+	private ManagedObjectReferenceCollection childAdditions;
 	/**
 	 * A collection of references to child assets
 	 */
-	private ManagedObjectReferences childAssets;
+	private ManagedObjectReferenceCollection childAssets;
 	/**
 	 * A collection of references to child devices
 	 */
-	private ManagedObjectReferences childDevices;
+	private ManagedObjectReferenceCollection childDevices;
 	/**
 	 * A collection of references to device parent objects
 	 */
-	private ManagedObjectReferences deviceParents;
+	private ManagedObjectReferenceCollection deviceParents;
 	/**
 	 * Custom fragments
 	 */
@@ -98,43 +98,43 @@ public class ManagedObject {
 		this.self = self;
 	}
 
-	public ManagedObjectReferences getAssetParents() {
+	public ManagedObjectReferenceCollection getAssetParents() {
 		return assetParents;
 	}
 
-	public void setAssetParents(ManagedObjectReferences assetParents) {
+	public void setAssetParents(ManagedObjectReferenceCollection assetParents) {
 		this.assetParents = assetParents;
 	}
 
-	public ManagedObjectReferences getChildAdditions() {
+	public ManagedObjectReferenceCollection getChildAdditions() {
 		return childAdditions;
 	}
 
-	public void setChildAdditions(ManagedObjectReferences childAdditions) {
+	public void setChildAdditions(ManagedObjectReferenceCollection childAdditions) {
 		this.childAdditions = childAdditions;
 	}
 
-	public ManagedObjectReferences getChildAssets() {
+	public ManagedObjectReferenceCollection getChildAssets() {
 		return childAssets;
 	}
 
-	public void setChildAssets(ManagedObjectReferences childAssets) {
+	public void setChildAssets(ManagedObjectReferenceCollection childAssets) {
 		this.childAssets = childAssets;
 	}
 
-	public ManagedObjectReferences getChildDevices() {
+	public ManagedObjectReferenceCollection getChildDevices() {
 		return childDevices;
 	}
 
-	public void setChildDevices(ManagedObjectReferences childDevices) {
+	public void setChildDevices(ManagedObjectReferenceCollection childDevices) {
 		this.childDevices = childDevices;
 	}
 
-	public ManagedObjectReferences getDeviceParents() {
+	public ManagedObjectReferenceCollection getDeviceParents() {
 		return deviceParents;
 	}
 
-	public void setDeviceParents(ManagedObjectReferences deviceParents) {
+	public void setDeviceParents(ManagedObjectReferenceCollection deviceParents) {
 		this.deviceParents = deviceParents;
 	}
 

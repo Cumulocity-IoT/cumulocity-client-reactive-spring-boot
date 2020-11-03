@@ -120,7 +120,7 @@ class InventoryServiceTest {
 		Map<String, List<String>> queryParamsMap = new HashMap<>();
 		queryParamsMap.put("fragmentType", Arrays.asList("c8y_JUnitTest"));
 
-		Flux<ManagedObject> managedObjectsFlux = this.inventoryService.list(queryParamsMap);
+		Flux<ManagedObject> managedObjectsFlux = this.inventoryService.listQuery(queryParamsMap);
 		StepVerifier.create(managedObjectsFlux.log()).expectNextCount(4).verifyComplete();
 		
 		for(ManagedObject managedObject: testItems) {
@@ -134,7 +134,7 @@ class InventoryServiceTest {
 		Map<String, List<String>> queryParamsMap = new HashMap<>();
 		queryParamsMap.put("fragmentType", Arrays.asList("c8y_JUnitTestEmpty"));
 
-		Flux<ManagedObject> managedObjectsFlux = this.inventoryService.list(queryParamsMap);
+		Flux<ManagedObject> managedObjectsFlux = this.inventoryService.listQuery(queryParamsMap);
 		StepVerifier.create(managedObjectsFlux.log()).expectNextCount(0).verifyComplete();
 	}
 	
