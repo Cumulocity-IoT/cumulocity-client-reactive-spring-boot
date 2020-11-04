@@ -16,6 +16,9 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 
 import com.c8y.reactive.client.core.C8yWebClientFactory;
+import com.c8y.reactive.client.core.ManagedObjectSource;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -159,8 +162,8 @@ public class InventoryService {
 	 * @param parentId
 	 * @return
 	 */
-	public Flux<ManagedObject> childDevicesList(Object parentId) {
-		return null;
+	public Flux<ManagedObjectReference> childDevicesList(Object parentId) {
+		return getManagedObjectFluxByReference(parentId, ManagedObjectReferenceEnum.CHILD_DEVICES, 5);
 	}
 	
 	/**
@@ -181,8 +184,8 @@ public class InventoryService {
 	 * @param parentId
 	 * @return
 	 */
-	public Mono<ManagedObject> childDevicesAdd(Object childId, Object parentId) {
-		return null;
+	public Mono<Void> childDevicesAdd(Object parentId, Object childId) {
+		return childReferencesAdd(parentId, childId, ManagedObjectReferenceEnum.CHILD_DEVICES);
 	}
 	
 	/**
@@ -194,6 +197,26 @@ public class InventoryService {
 	 */
 	public Mono<Void> childDevicesRemove(Object childId, Object parentId) {
 		return null;
+	}
+	
+	/**
+	 * Gets a list of child assets from a given managed object (parent)
+	 * 
+	 * @param parentId
+	 * @return
+	 */
+	public Flux<ManagedObjectReference> childAssetsList(Object parentId) {
+		return getManagedObjectFluxByReference(parentId, ManagedObjectReferenceEnum.CHILD_ASSETS, 5);
+	}
+	
+	/**
+	 * Gets a list of child additions from a given managed object (parent)
+	 * 
+	 * @param parentId
+	 * @return
+	 */
+	public Flux<ManagedObjectReference> childAdditionsList(Object parentId) {
+		return getManagedObjectFluxByReference(parentId, ManagedObjectReferenceEnum.CHILD_ADDITIONS, 5);
 	}
 	
 	private Flux<ManagedObject> getManagedObjectFluxByQuery(Map<String, List<String>> queryParamsMap, Integer pageSize) {
@@ -222,7 +245,7 @@ public class InventoryService {
 		return webClient.get().uri(uri).retrieve().bodyToMono(ManagedObjectCollection.class);
 	}
 	
-	private Flux<ManagedObjectCompleteReference> getManagedObjectFluxByReference(Object parentId, ManagedObjectCompleteReferenceEnum reference, Integer pageSize) {
+	private Flux<ManagedObjectReference> getManagedObjectFluxByReference(Object parentId, ManagedObjectReferenceEnum reference, Integer pageSize) {
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
 
 		DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory();
@@ -238,10 +261,22 @@ public class InventoryService {
 		}).flatMap(managedObjectCollection -> Flux.fromIterable(managedObjectCollection.getReferences()));
 	}
 	
-	private Mono<ManagedObjectCompleteReferenceCollection> fetchCompleteReferenceCollection(UriBuilder uriBuilder, Integer currentPage, Object parentId, Object reference) {
+	private Mono<ManagedObjectReferenceCollectionPage> fetchCompleteReferenceCollection(UriBuilder uriBuilder, Integer currentPage, Object parentId, Object reference) {
 		uriBuilder.replaceQueryParam("currentPage", currentPage);
 		String uri = uriBuilder.build(parentId, reference).toString();
-		return webClient.get().uri(uri).retrieve().bodyToMono(ManagedObjectCompleteReferenceCollection.class);
+		return webClient.get().uri(uri).retrieve().bodyToMono(ManagedObjectReferenceCollectionPage.class);
 	}
+	
+	private Mono<Void> childReferencesAdd(Object parentId, Object childId, ManagedObjectReferenceEnum reference) {
+		ManagedObjectSource childSource = new ManagedObjectSource();
+		childSource.setId(String.valueOf(childId));
+		
+		ManagedObjectReference managedObjectReference = new ManagedObjectReference();
+		managedObjectReference.setManagedObject(childSource);
+		
+		Mono<Void> result = webClient.post().uri("/inventory/managedObjects/{parentId}/{reference}", parentId, reference.getReferenceName()).accept(MediaType.APPLICATION_JSON).bodyValue(managedObjectReference).retrieve().bodyToMono(Void.class);
+		return result;
+	}
+
 
 }

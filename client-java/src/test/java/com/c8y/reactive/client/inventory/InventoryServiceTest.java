@@ -142,4 +142,26 @@ class InventoryServiceTest {
 	void testListRE() {
 		
 	}
+	
+	@Test
+	void testChildDevicesList() {
+		Flux<ManagedObjectReference> childDevicesListFlux = this.inventoryService.childDevicesList("1551728");
+		ManagedObjectReference blockFirst = childDevicesListFlux.blockFirst();
+		assertEquals("1576784", blockFirst.getManagedObject().getId());
+		StepVerifier.create(childDevicesListFlux.log()).expectNextCount(1).verifyComplete();
+	}
+	
+	@Test
+	void testChildAssetsList() {
+		Flux<ManagedObjectReference> childDevicesListFlux = this.inventoryService.childAssetsList("1473519");
+		ManagedObjectReference blockFirst = childDevicesListFlux.blockFirst();
+		assertEquals("1473520", blockFirst.getManagedObject().getId());
+		StepVerifier.create(childDevicesListFlux.log()).expectNextCount(1).verifyComplete();
+	}
+	
+	@Test
+	void testChildReferencesAdd() {
+		Mono<Void> childDevicesAdd = this.inventoryService.childDevicesAdd("520", "13417");
+		childDevicesAdd.block();
+	}
 }

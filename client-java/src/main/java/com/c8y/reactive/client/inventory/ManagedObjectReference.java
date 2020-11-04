@@ -1,22 +1,22 @@
 package com.c8y.reactive.client.inventory;
 
-import com.c8y.reactive.client.core.Source;
+import com.c8y.reactive.client.core.ManagedObjectSource;
 
 public class ManagedObjectReference {
 	/**
 	 * ManagedObject data itself with mandantory fragments of [[Source]] at least
 	 */
-	private Source managedObject;
+	private ManagedObjectSource managedObject;
 	/**
 	 * Link to this resource
 	 */
 	private String self;
 
-	public Source getManagedObject() {
+	public ManagedObjectSource getManagedObject() {
 		return managedObject;
 	}
 
-	public void setManagedObject(Source managedObject) {
+	public void setManagedObject(ManagedObjectSource managedObject) {
 		this.managedObject = managedObject;
 	}
 
