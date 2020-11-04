@@ -210,6 +210,39 @@ public class InventoryService {
 	}
 	
 	/**
+	 * Creates a new managed object as child asset to another managed object (parent)
+	 * 
+	 * @param managedObject
+	 * @param parentId
+	 * @return
+	 */
+	public Mono<ManagedObject> childAssetsCreate(ManagedObject managedObject, Object parentId) {
+		return null;
+	}
+	
+	/**
+	 * Adds an existing managed object as child asset to another managed object (parent)
+	 * 
+	 * @param childId
+	 * @param parentId
+	 * @return
+	 */
+	public Mono<Void> childAssetsAdd(Object parentId, Object childId) {
+		return childReferencesAdd(parentId, childId, ManagedObjectReferenceEnum.CHILD_ASSETS);
+	}
+	
+	/**
+	 * Removes an existing managed object as child asset from another managed object (parent)
+	 * 
+	 * @param childId
+	 * @param parentId
+	 * @return
+	 */
+	public Mono<Void> childAssetsRemove(Object childId, Object parentId) {
+		return null;
+	}
+	
+	/**
 	 * Gets a list of child additions from a given managed object (parent)
 	 * 
 	 * @param parentId
@@ -219,6 +252,39 @@ public class InventoryService {
 		return getManagedObjectFluxByReference(parentId, ManagedObjectReferenceEnum.CHILD_ADDITIONS, 5);
 	}
 	
+	/**
+	 * Creates a new managed object as child addition to another managed object (parent)
+	 * 
+	 * @param managedObject
+	 * @param parentId
+	 * @return
+	 */
+	public Mono<ManagedObject> childAdditionsCreate(ManagedObject managedObject, Object parentId) {
+		return null;
+	}
+	
+	/**
+	 * Adds an existing managed object as child addition to another managed object (parent)
+	 * 
+	 * @param childId
+	 * @param parentId
+	 * @return
+	 */
+	public Mono<Void> childAdditionAdd(Object parentId, Object childId) {
+		return childReferencesAdd(parentId, childId, ManagedObjectReferenceEnum.CHILD_ADDITIONS);
+	}
+	
+	/**
+	 * Removes an existing managed object as child addition from another managed object (parent)
+	 * 
+	 * @param childId
+	 * @param parentId
+	 * @return
+	 */
+	public Mono<Void> childAdditionsRemove(Object childId, Object parentId) {
+		return null;
+	}
+		
 	private Flux<ManagedObject> getManagedObjectFluxByQuery(Map<String, List<String>> queryParamsMap, Integer pageSize) {
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
 		if (queryParamsMap != null) {
