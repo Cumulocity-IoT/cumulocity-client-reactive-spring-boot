@@ -165,18 +165,7 @@ public class InventoryService {
 	public Flux<ManagedObjectReference> childDevicesList(Object parentId) {
 		return getManagedObjectFluxByReference(parentId, ManagedObjectReferenceEnum.CHILD_DEVICES, 5);
 	}
-	
-	/**
-	 * Creates a new managed object as child device to another managed object (parent)
-	 * 
-	 * @param managedObject
-	 * @param parentId
-	 * @return
-	 */
-	public Mono<ManagedObject> childDevicesCreate(ManagedObject managedObject, Object parentId) {
-		return null;
-	}
-	
+		
 	/**
 	 * Adds an existing managed object as child device to another managed object (parent)
 	 * 
@@ -195,8 +184,8 @@ public class InventoryService {
 	 * @param parentId
 	 * @return
 	 */
-	public Mono<Void> childDevicesRemove(Object childId, Object parentId) {
-		return null;
+	public Mono<Void> childDevicesRemove(Object parentId, Object childId) {
+		return childReferenceRemove(parentId, childId, ManagedObjectReferenceEnum.CHILD_DEVICES);
 	}
 	
 	/**
@@ -208,18 +197,7 @@ public class InventoryService {
 	public Flux<ManagedObjectReference> childAssetsList(Object parentId) {
 		return getManagedObjectFluxByReference(parentId, ManagedObjectReferenceEnum.CHILD_ASSETS, 5);
 	}
-	
-	/**
-	 * Creates a new managed object as child asset to another managed object (parent)
-	 * 
-	 * @param managedObject
-	 * @param parentId
-	 * @return
-	 */
-	public Mono<ManagedObject> childAssetsCreate(ManagedObject managedObject, Object parentId) {
-		return null;
-	}
-	
+		
 	/**
 	 * Adds an existing managed object as child asset to another managed object (parent)
 	 * 
@@ -239,7 +217,7 @@ public class InventoryService {
 	 * @return
 	 */
 	public Mono<Void> childAssetsRemove(Object childId, Object parentId) {
-		return null;
+		return childReferenceRemove(parentId, childId, ManagedObjectReferenceEnum.CHILD_ASSETS);
 	}
 	
 	/**
@@ -251,18 +229,7 @@ public class InventoryService {
 	public Flux<ManagedObjectReference> childAdditionsList(Object parentId) {
 		return getManagedObjectFluxByReference(parentId, ManagedObjectReferenceEnum.CHILD_ADDITIONS, 5);
 	}
-	
-	/**
-	 * Creates a new managed object as child addition to another managed object (parent)
-	 * 
-	 * @param managedObject
-	 * @param parentId
-	 * @return
-	 */
-	public Mono<ManagedObject> childAdditionsCreate(ManagedObject managedObject, Object parentId) {
-		return null;
-	}
-	
+		
 	/**
 	 * Adds an existing managed object as child addition to another managed object (parent)
 	 * 
@@ -282,7 +249,7 @@ public class InventoryService {
 	 * @return
 	 */
 	public Mono<Void> childAdditionsRemove(Object childId, Object parentId) {
-		return null;
+		return childReferenceRemove(parentId, childId, ManagedObjectReferenceEnum.CHILD_ADDITIONS);
 	}
 		
 	private Flux<ManagedObject> getManagedObjectFluxByQuery(Map<String, List<String>> queryParamsMap, Integer pageSize) {
@@ -319,15 +286,15 @@ public class InventoryService {
 		queryParams.put("pageSize", Arrays.asList(String.valueOf(pageSize)));
 		UriBuilder uriBuilder = uriBuilderFactory.builder().path("/inventory/managedObjects/{parentId}/{references}").queryParams(queryParams);
 
-		return fetchCompleteReferenceCollection(uriBuilder, 1, parentId, reference.getReferenceName()).expand(managedObjectCollection -> {
+		return fetchReferenceCollection(uriBuilder, 1, parentId, reference.getReferenceName()).expand(managedObjectCollection -> {
 			if (managedObjectCollection.getReferences().isEmpty()) {
 				return Mono.empty();
 			}
-			return fetchCompleteReferenceCollection(uriBuilder, managedObjectCollection.getStatistics().getCurrentPage() + 1, parentId, reference.getReferenceName());
+			return fetchReferenceCollection(uriBuilder, managedObjectCollection.getStatistics().getCurrentPage() + 1, parentId, reference.getReferenceName());
 		}).flatMap(managedObjectCollection -> Flux.fromIterable(managedObjectCollection.getReferences()));
 	}
 	
-	private Mono<ManagedObjectReferenceCollectionPage> fetchCompleteReferenceCollection(UriBuilder uriBuilder, Integer currentPage, Object parentId, Object reference) {
+	private Mono<ManagedObjectReferenceCollectionPage> fetchReferenceCollection(UriBuilder uriBuilder, Integer currentPage, Object parentId, Object reference) {
 		uriBuilder.replaceQueryParam("currentPage", currentPage);
 		String uri = uriBuilder.build(parentId, reference).toString();
 		return webClient.get().uri(uri).retrieve().bodyToMono(ManagedObjectReferenceCollectionPage.class);
@@ -341,6 +308,11 @@ public class InventoryService {
 		managedObjectReference.setManagedObject(childSource);
 		
 		Mono<Void> result = webClient.post().uri("/inventory/managedObjects/{parentId}/{reference}", parentId, reference.getReferenceName()).accept(MediaType.APPLICATION_JSON).bodyValue(managedObjectReference).retrieve().bodyToMono(Void.class);
+		return result;
+	}
+	
+	private Mono<Void> childReferenceRemove(Object parentId, Object childId, ManagedObjectReferenceEnum reference) {
+		Mono<Void> result = webClient.delete().uri("/inventory/managedObjects/{parentId}/{reference}/{childId}", parentId, reference.getReferenceName(), childId).retrieve().bodyToMono(Void.class);
 		return result;
 	}
 
