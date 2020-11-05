@@ -183,23 +183,78 @@ class InventoryServiceTest {
 	
 	@Test
 	void testChildAssets() {
-		Flux<ManagedObjectReference> childDevicesListFlux = this.inventoryService.childAssetsList("1473519");
+		/* create */
+		ManagedObject assetGroupManagedObject = new ManagedObject();
+		assetGroupManagedObject.set("name", "myManagedObjectGroup");
+		assetGroupManagedObject.set("type", "c8y_DeviceGroup");
+		assetGroupManagedObject.set("c8y_JUnitTest");
+		assetGroupManagedObject.set("c8y_IsDeviceGroup");
+		Mono<ManagedObject> createdManagedObjectMono = this.inventoryService.create(assetGroupManagedObject);
+		ManagedObject createdParentManagedObject = createdManagedObjectMono.block();
+		
+		ManagedObject newChildManagedObject = new ManagedObject();
+		newChildManagedObject.set("name", "myManagedObjectChild");
+		newChildManagedObject.set("type", "myType");
+		newChildManagedObject.set("c8y_JUnitTest");
+		newChildManagedObject.set("c8y_IsDevice");
+		Mono<ManagedObject> createdChildManagedObjectMono = this.inventoryService.create(newChildManagedObject);
+		ManagedObject createdChildManagedObject = createdChildManagedObjectMono.block();
+		
+		
+		Mono<Void> childDevicesAdd = this.inventoryService.childAssetsAdd(createdParentManagedObject.getId(), createdChildManagedObject.getId());
+		StepVerifier.create(childDevicesAdd.log()).verifyComplete();
+		
+		Flux<ManagedObjectReference> childDevicesListFlux = this.inventoryService.childAssetsList(createdParentManagedObject.getId());
 		ManagedObjectReference blockFirst = childDevicesListFlux.blockFirst();
-		assertEquals("1473520", blockFirst.getManagedObject().getId());
+		assertEquals(createdChildManagedObject.getId(), blockFirst.getManagedObject().getId());
 		StepVerifier.create(childDevicesListFlux.log()).expectNextCount(1).verifyComplete();
+		
+		Mono<Void> childDevicesRemove = this.inventoryService.childAssetsRemove(createdParentManagedObject.getId(), createdChildManagedObject.getId());
+		StepVerifier.create(childDevicesRemove.log()).verifyComplete();
+		
+		Flux<ManagedObjectReference> empychildDevicesListFlux = this.inventoryService.childAssetsList(createdParentManagedObject.getId());
+		StepVerifier.create(empychildDevicesListFlux.log()).expectNextCount(0).verifyComplete();
+		
+		this.inventoryService.delete(createdParentManagedObject.getId());
+		this.inventoryService.delete(createdChildManagedObject.getId());
 	}
 	
 	@Test
 	void testChildAdditions() {
-		Flux<ManagedObjectReference> childDevicesListFlux = this.inventoryService.childAssetsList("1473519");
+		/* create */
+		ManagedObject newParentManagedObject = new ManagedObject();
+		newParentManagedObject.set("name", "myManagedObjectParent");
+		newParentManagedObject.set("type", "myType");
+		newParentManagedObject.set("c8y_JUnitTest");
+		newParentManagedObject.set("c8y_IsDevice");
+		Mono<ManagedObject> createdManagedObjectMono = this.inventoryService.create(newParentManagedObject);
+		ManagedObject createdParentManagedObject = createdManagedObjectMono.block();
+		
+		ManagedObject newChildManagedObject = new ManagedObject();
+		newChildManagedObject.set("name", "myManagedObjectChild");
+		newChildManagedObject.set("type", "myType");
+		newChildManagedObject.set("c8y_JUnitTest");
+		newChildManagedObject.set("c8y_IsDevice");
+		Mono<ManagedObject> createdChildManagedObjectMono = this.inventoryService.create(newChildManagedObject);
+		ManagedObject createdChildManagedObject = createdChildManagedObjectMono.block();
+		
+		
+		Mono<Void> childDevicesAdd = this.inventoryService.childAdditionsAdd(createdParentManagedObject.getId(), createdChildManagedObject.getId());
+		StepVerifier.create(childDevicesAdd.log()).verifyComplete();
+		
+		Flux<ManagedObjectReference> childDevicesListFlux = this.inventoryService.childAdditionsList(createdParentManagedObject.getId());
 		ManagedObjectReference blockFirst = childDevicesListFlux.blockFirst();
-		assertEquals("1473520", blockFirst.getManagedObject().getId());
+		assertEquals(createdChildManagedObject.getId(), blockFirst.getManagedObject().getId());
 		StepVerifier.create(childDevicesListFlux.log()).expectNextCount(1).verifyComplete();
+		
+		Mono<Void> childDevicesRemove = this.inventoryService.childAdditionsRemove(createdParentManagedObject.getId(), createdChildManagedObject.getId());
+		StepVerifier.create(childDevicesRemove.log()).verifyComplete();
+		
+		Flux<ManagedObjectReference> empychildDevicesListFlux = this.inventoryService.childAdditionsList(createdParentManagedObject.getId());
+		StepVerifier.create(empychildDevicesListFlux.log()).expectNextCount(0).verifyComplete();
+		
+		this.inventoryService.delete(createdParentManagedObject.getId());
+		this.inventoryService.delete(createdChildManagedObject.getId());
 	}
-	
-	@Test
-	void testChildReferencesAdd() {
-		Mono<Void> childDevicesAdd = this.inventoryService.childDevicesAdd("520", "13417");
-		childDevicesAdd.block();
-	}
+
 }

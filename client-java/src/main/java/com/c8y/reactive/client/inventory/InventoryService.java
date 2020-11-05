@@ -216,7 +216,7 @@ public class InventoryService {
 	 * @param parentId
 	 * @return
 	 */
-	public Mono<Void> childAssetsRemove(Object childId, Object parentId) {
+	public Mono<Void> childAssetsRemove(Object parentId, Object childId) {
 		return childReferenceRemove(parentId, childId, ManagedObjectReferenceEnum.CHILD_ASSETS);
 	}
 	
@@ -237,7 +237,7 @@ public class InventoryService {
 	 * @param parentId
 	 * @return
 	 */
-	public Mono<Void> childAdditionAdd(Object parentId, Object childId) {
+	public Mono<Void> childAdditionsAdd(Object parentId, Object childId) {
 		return childReferencesAdd(parentId, childId, ManagedObjectReferenceEnum.CHILD_ADDITIONS);
 	}
 	
@@ -248,7 +248,7 @@ public class InventoryService {
 	 * @param parentId
 	 * @return
 	 */
-	public Mono<Void> childAdditionsRemove(Object childId, Object parentId) {
+	public Mono<Void> childAdditionsRemove(Object parentId, Object childId) {
 		return childReferenceRemove(parentId, childId, ManagedObjectReferenceEnum.CHILD_ADDITIONS);
 	}
 		
