@@ -16,40 +16,51 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 
 import com.c8y.reactive.client.core.C8yWebClientFactory;
+import com.c8y.reactive.client.core.ManagedObjectSource;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * This class allows for managing managed objects and different child types.
+ * 
+ * @author alexander.pester@softwareag.com
+ *
+ */
 @Service
 public class InventoryService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(InventoryService.class);
-	
+
 	private final WebClient webClient;
-			
+
 	public InventoryService(C8yWebClientFactory c8yWebClientFactory) {
 		webClient = c8yWebClientFactory.buildC8yWebClient();
 	}
-	
+
 	/**
 	 * Gets the details of managed object and resturns it.
 	 * 
 	 * @param id managed object id, can be a string or a number
 	 * @return ManagedObject
 	 */
-	public Mono<ManagedObject> detail(Object id) {		
-		Mono<ManagedObject> result = webClient.get().uri("/inventory/managedObjects/{id}", id).retrieve().bodyToMono(ManagedObject.class);
+	public Mono<ManagedObject> detail(Object id) {
+		Mono<ManagedObject> result = webClient.get().uri("/inventory/managedObjects/{id}", id).retrieve()
+				.bodyToMono(ManagedObject.class);
 		return result;
 	}
-	
+
 	/**
 	 * Gets the details of managed object and returns complete ResponseEntity.
 	 * 
 	 * @param id managed object id, can be a string or a number
 	 * @return ResponseEntity
 	 */
-	public Mono<ResponseEntity<ManagedObject>> detailRE(Object id) {		
-		Mono<ResponseEntity<ManagedObject>> result = webClient.get().uri("/inventory/managedObjects/{id}", id).exchange().flatMap(response -> response.toEntity(ManagedObject.class));
+	public Mono<ResponseEntity<ManagedObject>> detailRE(Object id) {
+		Mono<ResponseEntity<ManagedObject>> result = webClient.get().uri("/inventory/managedObjects/{id}", id)
+				.exchange().flatMap(response -> response.toEntity(ManagedObject.class));
 		return result;
 	}
 
@@ -60,10 +71,11 @@ public class InventoryService {
 	 * @return
 	 */
 	public Mono<ManagedObject> create(ManagedObject managedObject) {
-		Mono<ManagedObject> result = webClient.post().uri("/inventory/managedObjects").accept(MediaType.APPLICATION_JSON).bodyValue(managedObject).retrieve().bodyToMono(ManagedObject.class);
+		Mono<ManagedObject> result = webClient.post().uri("/inventory/managedObjects")
+				.accept(MediaType.APPLICATION_JSON).bodyValue(managedObject).retrieve().bodyToMono(ManagedObject.class);
 		return result;
 	}
-	
+
 	/**
 	 * Creates a new managed object and returns complete ResponseEntity.
 	 * 
@@ -71,10 +83,12 @@ public class InventoryService {
 	 * @return
 	 */
 	public Mono<ResponseEntity<ManagedObject>> createRE(ManagedObject managedObject) {
-		Mono<ResponseEntity<ManagedObject>> result = webClient.post().uri("/inventory/managedObjects").accept(MediaType.APPLICATION_JSON).bodyValue(managedObject).exchange().flatMap(response -> response.toEntity(ManagedObject.class));
+		Mono<ResponseEntity<ManagedObject>> result = webClient.post().uri("/inventory/managedObjects")
+				.accept(MediaType.APPLICATION_JSON).bodyValue(managedObject).exchange()
+				.flatMap(response -> response.toEntity(ManagedObject.class));
 		return result;
 	}
-	
+
 	/**
 	 * Updates managed object and returns it.
 	 * 
@@ -82,10 +96,11 @@ public class InventoryService {
 	 * @return
 	 */
 	public Mono<ManagedObject> update(ManagedObject managedObject, Object id) {
-		Mono<ManagedObject> result = webClient.put().uri("/inventory/managedObjects/{id}", id).accept(MediaType.APPLICATION_JSON).bodyValue(managedObject).retrieve().bodyToMono(ManagedObject.class);
+		Mono<ManagedObject> result = webClient.put().uri("/inventory/managedObjects/{id}", id)
+				.accept(MediaType.APPLICATION_JSON).bodyValue(managedObject).retrieve().bodyToMono(ManagedObject.class);
 		return result;
 	}
-	
+
 	/**
 	 * Updates managed object and returns complete ResponseEntity.
 	 * 
@@ -93,10 +108,12 @@ public class InventoryService {
 	 * @return
 	 */
 	public Mono<ResponseEntity<ManagedObject>> updateRE(ManagedObject managedObject, Object id) {
-		Mono<ResponseEntity<ManagedObject>> result = webClient.put().uri("/inventory/managedObjects/{id}", id).accept(MediaType.APPLICATION_JSON).bodyValue(managedObject).exchange().flatMap(response -> response.toEntity(ManagedObject.class));
+		Mono<ResponseEntity<ManagedObject>> result = webClient.put().uri("/inventory/managedObjects/{id}", id)
+				.accept(MediaType.APPLICATION_JSON).bodyValue(managedObject).exchange()
+				.flatMap(response -> response.toEntity(ManagedObject.class));
 		return result;
 	}
-	
+
 	/**
 	 * Removes managed object with given id.
 	 * 
@@ -104,64 +121,200 @@ public class InventoryService {
 	 * @return
 	 */
 	public Mono<Void> delete(Object id) {
-		Mono<Void> result = webClient.delete().uri("/inventory/managedObjects/{id}", id).retrieve().bodyToMono(Void.class);
+		Mono<Void> result = webClient.delete().uri("/inventory/managedObjects/{id}", id).retrieve()
+				.bodyToMono(Void.class);
 		return result;
 	}
-	
+
 	/**
-	 *  Removes managed object with given id.
+	 * Removes managed object with given id.
 	 * 
 	 * @param id
 	 * @return
 	 */
 	public Mono<ResponseEntity<Void>> deleteRE(Object id) {
-		Mono<ResponseEntity<Void>> result = webClient.delete().uri("/inventory/managedObjects/{id}", id).exchange().flatMap(response -> response.toEntity(Void.class));
+		Mono<ResponseEntity<Void>> result = webClient.delete().uri("/inventory/managedObjects/{id}", id).exchange()
+				.flatMap(response -> response.toEntity(Void.class));
 		return result;
 	}
-	
+
 	/**
-	 * Gets the list of managed objects use query parameters.
+	 * Gets the list of managed objects using query parameters.
 	 * 
 	 * @return
 	 */
-	public Flux<ManagedObject> list(Map<String, List<String>> queryParamsMap) {
-		return getManagedObjectFlux(queryParamsMap, 5);
+	public Flux<ManagedObject> listQuery(Map<String, List<String>> queryParamsMap) {
+		return getManagedObjectFluxByQuery(queryParamsMap, 5);
 	}
 	
 	/**
-	 * Gets the list of managed objects use query parameters.
+	 * Gets the list of all managed objects.
 	 * 
 	 * @return
 	 */
 	public Flux<ManagedObject> list() {
-		return getManagedObjectFlux(null, 5);
+		return getManagedObjectFluxByQuery(null, 5);
+	}
+
+	/**
+	 * Gets a list of child devices from a given managed object (parent)
+	 * 
+	 * @param parentId
+	 * @return
+	 */
+	public Flux<ManagedObjectReference> childDevicesList(Object parentId) {
+		return getManagedObjectFluxByReference(parentId, ManagedObjectReferenceEnum.CHILD_DEVICES, 5);
+	}
+		
+	/**
+	 * Adds an existing managed object as child device to another managed object (parent)
+	 * 
+	 * @param childId
+	 * @param parentId
+	 * @return
+	 */
+	public Mono<Void> childDevicesAdd(Object parentId, Object childId) {
+		return childReferencesAdd(parentId, childId, ManagedObjectReferenceEnum.CHILD_DEVICES);
 	}
 	
-	private Flux<ManagedObject> getManagedObjectFlux(Map<String, List<String>> queryParamsMap, Integer pageSize) {
-		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
-		if(queryParamsMap != null) {
-			queryParams.putAll(queryParamsMap);			
-		}
+	/**
+	 * Removes an existing managed object as child device from another managed object (parent)
+	 * 
+	 * @param childId
+	 * @param parentId
+	 * @return
+	 */
+	public Mono<Void> childDevicesRemove(Object parentId, Object childId) {
+		return childReferenceRemove(parentId, childId, ManagedObjectReferenceEnum.CHILD_DEVICES);
+	}
 	
-		DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory();
+	/**
+	 * Gets a list of child assets from a given managed object (parent)
+	 * 
+	 * @param parentId
+	 * @return
+	 */
+	public Flux<ManagedObjectReference> childAssetsList(Object parentId) {
+		return getManagedObjectFluxByReference(parentId, ManagedObjectReferenceEnum.CHILD_ASSETS, 5);
+	}
 		
+	/**
+	 * Adds an existing managed object as child asset to another managed object (parent)
+	 * 
+	 * @param childId
+	 * @param parentId
+	 * @return
+	 */
+	public Mono<Void> childAssetsAdd(Object parentId, Object childId) {
+		return childReferencesAdd(parentId, childId, ManagedObjectReferenceEnum.CHILD_ASSETS);
+	}
+	
+	/**
+	 * Removes an existing managed object as child asset from another managed object (parent)
+	 * 
+	 * @param childId
+	 * @param parentId
+	 * @return
+	 */
+	public Mono<Void> childAssetsRemove(Object parentId, Object childId) {
+		return childReferenceRemove(parentId, childId, ManagedObjectReferenceEnum.CHILD_ASSETS);
+	}
+	
+	/**
+	 * Gets a list of child additions from a given managed object (parent)
+	 * 
+	 * @param parentId
+	 * @return
+	 */
+	public Flux<ManagedObjectReference> childAdditionsList(Object parentId) {
+		return getManagedObjectFluxByReference(parentId, ManagedObjectReferenceEnum.CHILD_ADDITIONS, 5);
+	}
+		
+	/**
+	 * Adds an existing managed object as child addition to another managed object (parent)
+	 * 
+	 * @param childId
+	 * @param parentId
+	 * @return
+	 */
+	public Mono<Void> childAdditionsAdd(Object parentId, Object childId) {
+		return childReferencesAdd(parentId, childId, ManagedObjectReferenceEnum.CHILD_ADDITIONS);
+	}
+	
+	/**
+	 * Removes an existing managed object as child addition from another managed object (parent)
+	 * 
+	 * @param childId
+	 * @param parentId
+	 * @return
+	 */
+	public Mono<Void> childAdditionsRemove(Object parentId, Object childId) {
+		return childReferenceRemove(parentId, childId, ManagedObjectReferenceEnum.CHILD_ADDITIONS);
+	}
+		
+	private Flux<ManagedObject> getManagedObjectFluxByQuery(Map<String, List<String>> queryParamsMap, Integer pageSize) {
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+		if (queryParamsMap != null) {
+			queryParams.putAll(queryParamsMap);
+		}
+
+		DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory();
+
 		queryParams.put("pageSize", Arrays.asList(String.valueOf(pageSize)));
 		UriBuilder uriBuilder = uriBuilderFactory.builder().path("/inventory/managedObjects").queryParams(queryParams);
-		
-	    return fetchCollection(uriBuilder, 1).expand(managedObjectCollection -> {
-	        if (managedObjectCollection.getManagedObjects().isEmpty()) {
-	            return Mono.empty();
-	        }
-	        return fetchCollection(uriBuilder, managedObjectCollection.getStatistics().getCurrentPage() + 1);
-	    }).flatMap(managedObjectCollection -> Flux.fromIterable(managedObjectCollection.getManagedObjects()));
-		
+
+		return fetchCollection(uriBuilder, 1).expand(managedObjectCollection -> {
+			if (managedObjectCollection.getManagedObjects().isEmpty()) {
+				return Mono.empty();
+			}
+			return fetchCollection(uriBuilder, managedObjectCollection.getStatistics().getCurrentPage() + 1);
+		}).flatMap(managedObjectCollection -> Flux.fromIterable(managedObjectCollection.getManagedObjects()));
+
 	}
-	
+
 	private Mono<ManagedObjectCollection> fetchCollection(UriBuilder uriBuilder, Integer currentPage) {
 		uriBuilder.replaceQueryParam("currentPage", currentPage);
 		String uri = uriBuilder.build().toString();
-        return webClient.get().uri(uri).retrieve()
-                .bodyToMono(ManagedObjectCollection.class);
+		return webClient.get().uri(uri).retrieve().bodyToMono(ManagedObjectCollection.class);
 	}
 	
+	private Flux<ManagedObjectReference> getManagedObjectFluxByReference(Object parentId, ManagedObjectReferenceEnum reference, Integer pageSize) {
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+
+		DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory();
+
+		queryParams.put("pageSize", Arrays.asList(String.valueOf(pageSize)));
+		UriBuilder uriBuilder = uriBuilderFactory.builder().path("/inventory/managedObjects/{parentId}/{references}").queryParams(queryParams);
+
+		return fetchReferenceCollection(uriBuilder, 1, parentId, reference.getReferenceName()).expand(managedObjectCollection -> {
+			if (managedObjectCollection.getReferences().isEmpty()) {
+				return Mono.empty();
+			}
+			return fetchReferenceCollection(uriBuilder, managedObjectCollection.getStatistics().getCurrentPage() + 1, parentId, reference.getReferenceName());
+		}).flatMap(managedObjectCollection -> Flux.fromIterable(managedObjectCollection.getReferences()));
+	}
+	
+	private Mono<ManagedObjectReferenceCollectionPage> fetchReferenceCollection(UriBuilder uriBuilder, Integer currentPage, Object parentId, Object reference) {
+		uriBuilder.replaceQueryParam("currentPage", currentPage);
+		String uri = uriBuilder.build(parentId, reference).toString();
+		return webClient.get().uri(uri).retrieve().bodyToMono(ManagedObjectReferenceCollectionPage.class);
+	}
+	
+	private Mono<Void> childReferencesAdd(Object parentId, Object childId, ManagedObjectReferenceEnum reference) {
+		ManagedObjectSource childSource = new ManagedObjectSource();
+		childSource.setId(String.valueOf(childId));
+		
+		ManagedObjectReference managedObjectReference = new ManagedObjectReference();
+		managedObjectReference.setManagedObject(childSource);
+		
+		Mono<Void> result = webClient.post().uri("/inventory/managedObjects/{parentId}/{reference}", parentId, reference.getReferenceName()).accept(MediaType.APPLICATION_JSON).bodyValue(managedObjectReference).retrieve().bodyToMono(Void.class);
+		return result;
+	}
+	
+	private Mono<Void> childReferenceRemove(Object parentId, Object childId, ManagedObjectReferenceEnum reference) {
+		Mono<Void> result = webClient.delete().uri("/inventory/managedObjects/{parentId}/{reference}/{childId}", parentId, reference.getReferenceName(), childId).retrieve().bodyToMono(Void.class);
+		return result;
+	}
+
+
 }

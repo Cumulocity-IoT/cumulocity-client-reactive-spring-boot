@@ -1,42 +1,37 @@
 package com.c8y.reactive.client.inventory;
 
-import java.util.Arrays;
+import java.util.List;
 
-public class ManagedObjectReferences {
+public class ManagedObjectReferenceCollection {
 	/**
-	 * References array of type [[IManagedObjectReference]]
+	 * References list of type ManagedObjectReference
 	 */
-	private ManagedObjectReference[] references;
+	private List<ManagedObjectReference> references;
 	/**
 	 * Link to this resource
 	 */
 	private String self;
-
-	public ManagedObjectReference[] getReferences() {
+	
+	public List<ManagedObjectReference> getReferences() {
 		return references;
 	}
-
-	public void setReferences(ManagedObjectReference[] references) {
+	public void setReferences(List<ManagedObjectReference> references) {
 		this.references = references;
 	}
-
 	public String getSelf() {
 		return self;
 	}
-
 	public void setSelf(String self) {
 		this.self = self;
 	}
-
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("ManagedObjectReferences [references=");
-		builder.append(Arrays.toString(references));
+		builder.append("ManagedObjectReferenceCollection [references=");
+		builder.append(references);
 		builder.append(", self=");
 		builder.append(self);
 		builder.append("]");
 		return builder.toString();
 	}
-
 }

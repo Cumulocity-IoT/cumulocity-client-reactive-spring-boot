@@ -6,7 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 public class C8yWebClientFactory {
-
+	
 	private String baseUrl;
 
 	private String userName;
@@ -22,7 +22,7 @@ public class C8yWebClientFactory {
 		this.userName = userName;
 		this.password = password;
 	}
-
+	
 	public WebClient buildC8yWebClient() {
 		return webClientBuilder.baseUrl(baseUrl).defaultHeaders(header -> header.setBasicAuth(userName, password))
 				.build();
