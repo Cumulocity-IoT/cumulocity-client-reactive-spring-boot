@@ -16,6 +16,13 @@ Current Cumulocity Java SDK are synchrone. To build a non blocking and even a re
 - add childDevices, childAssets and childAdditions
 - remove childDevices, childAssets and childAdditions
 
+next step:
+
+**MeasurementService:**
+- create Measurement
+- create Measurement series
+...
+
 **I am looking also for contributors, please let me know!** 
 
 ## Vision
