@@ -4,6 +4,8 @@ Cumulocity client using spring boot reactive stack (WebFlux) https://docs.spring
 ## State
 
 Current Cumulocity Java SDK are synchrone. To build a non blocking and even a reactive application a reactive client is needed! Currently i finished InventoryService with following support:
+
+**InventoryService:**
 - create ManagedObject (create)
 - update ManagedObject (update)
 - delete ManagedObject (delete)
