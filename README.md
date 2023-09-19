@@ -1,3 +1,5 @@
+# !!! Archived -- this repository is currently not actively maintained!
+
 # cumulocity-client-reactive-spring-boot
 Cumulocity client using spring boot reactive stack (WebFlux) https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html
 
